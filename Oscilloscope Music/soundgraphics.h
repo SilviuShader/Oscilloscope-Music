@@ -4,7 +4,8 @@
 
 typedef struct FrameGeneratorState
 {
-	float     accumulatedTime;
+	float accumulatedTime;
+	float aspectRatio;
 } FrameGeneratorState;
 
 void GenerateAudioFrame(FrameGeneratorState*, AudioData*, float);
