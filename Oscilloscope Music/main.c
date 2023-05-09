@@ -3,6 +3,7 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "audiodata.h"
 #include "soundgraphics.h"
@@ -52,7 +53,7 @@ Vector2 AudioToNDC(const float leftSample, const float rightSample)
     return res;
 }
 
-Mesh GenFrameMesh(const AudioData audioData, const int firstSampleIndex, const int lastSampleIndex)
+Mesh GenFrameMesh(const AudioData audioData, const float uSize, const int firstSampleIndex, const int lastSampleIndex)
 {
     Mesh mesh = { 0 };
     mesh.triangleCount = (lastSampleIndex - firstSampleIndex) * 2;
@@ -84,8 +85,6 @@ Mesh GenFrameMesh(const AudioData audioData, const int firstSampleIndex, const i
             dir.x = 1.0f;
             dir.y = 0.0f;
         }
-
-        const float uSize = 0.005f;
 
         dir.x *= uSize;
         dir.y *= uSize;
@@ -180,14 +179,18 @@ Mesh GenFrameMesh(const AudioData audioData, const int firstSampleIndex, const i
 
 int main(void)
 {
-	const uint32_t screenWidth   = 800;
-	const uint32_t screenHeight  = 450;
+	const uint32_t screenWidth    = 800;
+	const uint32_t screenHeight   = 450;
+                                  
+    const int      targetFPS      = 60;
+                                  
+    const uint32_t sampleRate     = 48000;
+                                  
+          float    animationTime  = 30.0f;
 
-    const int      targetFPS     = 60;
-
-    const uint32_t sampleRate    = 48000;
-
-          float    animationTime = 30.0f;
+	const float    uIntensity     = 0.1f;
+	const float    uSize          = 0.01f;
+    const float    uIntensityBase = max(0.0f, uIntensity - 0.4f) * 0.7f - 1000.0f * uSize / 500.0f;
 
 	InitWindow(screenWidth, screenHeight, "Oscilloscope Music");
 
@@ -208,18 +211,6 @@ int main(void)
         accumulatedTime += deltaTime;
     }
 
-    /*
-    for (int i = 0; i < samplesCount; i++)
-    {
-        const float value = (1.0f + sinf(PI * 2.0f * ((float)i / 1000.0f))) * 0.5f;
-        leftSamples[i] = value;
-        rightSamples[i] = value;
-    }*/
-
-    //AddSineWave(&audioData, 0, 100000, LEFT_CHANNEL, 261.63f, 0.0f, 0.5f);
-    //AddSineWave(&audioData, 0, 100000, RIGHT_CHANNEL, 261.63f, PI / 2.0f, 0.5f);
-    
-
     Normalize01Wave(&audioData);
 
     animationTime = (float)audioData.samplesCount / (float)sampleRate;
@@ -229,9 +220,7 @@ int main(void)
     uint32_t wavDataLength = CreateWav16PCMStereo(wavSamples, sampleRate, audioData.samplesCount, &wavData);
 
     FILE* audioFile = fopen("test.wav", "wb");
-
     fwrite(wavData, sizeof(uint8_t), wavDataLength, audioFile);
-
     fclose(audioFile);
 
     InitAudioDevice();
@@ -245,6 +234,9 @@ int main(void)
     Shader shader = LoadShader("./data/vs.glsl", "./data/fs.glsl");
     SetShaderValue(shader, GetShaderLocation(shader, "aspectRatio"), &state.aspectRatio, SHADER_UNIFORM_FLOAT);
 
+	SetShaderValue(shader, GetShaderLocation(shader, "uIntensity"), &uIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(shader, GetShaderLocation(shader, "uSize"), &uSize, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(shader, GetShaderLocation(shader, "uIntensityBase"), &uIntensityBase, SHADER_UNIFORM_FLOAT);
 
 	while (!WindowShouldClose())
 	{
@@ -256,7 +248,7 @@ int main(void)
         int firstSampleIndex = (int)(previousMusicTimePlayed / animationTime * (float)audioData.samplesCount);
         int lastSampleIndex = (int)(currentMusicTimePlayed / animationTime * (float)audioData.samplesCount);
 
-        Mesh mesh = GenFrameMesh(audioData, firstSampleIndex, lastSampleIndex);
+        Mesh mesh = GenFrameMesh(audioData, uSize, firstSampleIndex, lastSampleIndex);
 
         Model model = LoadModelFromMesh(mesh);
         model.materials[0].shader = shader;

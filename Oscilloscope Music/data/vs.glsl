@@ -10,10 +10,10 @@ uniform mat4 matNormal;
 
 uniform float aspectRatio;
 
-out vec3 fragColor;
+out vec3 fragXYLength;
 
 void main()
 {
 	gl_Position = vec4(vertexPosition.x / aspectRatio, vertexPosition.y, 0.0, 1.0);
-	fragColor = vec3(0.0, 1.0, 1.0);
+	fragXYLength = vertexNormal;
 }
