@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="audiographics.c" />
+    <ClCompile Include="audiomesh.c" />
     <ClCompile Include="audiopath.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="audiodata.c" />
@@ -137,6 +138,7 @@
   <ItemGroup>
     <ClInclude Include="audiodata.h" />
     <ClInclude Include="audiographics.h" />
+    <ClInclude Include="audiomesh.h" />
     <ClInclude Include="audiopath.h" />
     <ClInclude Include="soundgraphics.h" />
     <ClInclude Include="wavhelper.h" />

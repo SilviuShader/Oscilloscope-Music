@@ -81,6 +81,7 @@ void AppendSphere(float frequency, float yStep, AudioPath* audioPath, Matrix wor
 {
 	size_t samplesCount = (int)(1.0f / yStep) + 1;
 
+	// TODO: Ewww
 	Vector3* path3d = malloc(sizeof(Vector3) * samplesCount);
 
 	for (int i = 0; i < samplesCount; i++)

@@ -60,6 +60,7 @@ void GenerateAudioFrame(FrameGeneratorState* state, AudioData* audioData, float 
 	FreeAudioPath(&audioPath);
 }
 
+// TODO: Improve this so it can combine objects.
 void AppendAudioPath(AudioData* audioData, AudioPath audioPath, float deltaTime)
 {
 	float totalDistance = 0.0f;

@@ -33,6 +33,9 @@
     <ClCompile Include="audiographics.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="audiomesh.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="wavhelper.h">
@@ -48,6 +51,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="audiographics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="audiomesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
