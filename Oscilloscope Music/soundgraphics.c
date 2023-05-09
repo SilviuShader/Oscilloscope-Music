@@ -39,13 +39,13 @@ void GenerateAudioFrame(FrameGeneratorState* state, AudioData* audioData, float 
 
 	float bpm = 120.0f;
 
-	float scale = (sinf(2.0f * PI * state->accumulatedTime * (bpm / 60.0f)) * 0.5f + 0.5f) * 0.4f + 0.1f;
+	float scale = ((sinf(2.0f * PI * state->accumulatedTime * (bpm / 60.0f)) * 0.5f + 0.5f) * 0.3f + 0.2f) * 1.0;
 	worldMatrix = MatrixMultiply(worldMatrix, MatrixScale(scale, scale, scale));
-	worldMatrix = MatrixMultiply(worldMatrix, MatrixTranslate(-1.0f, -1.0f, -2.0f));
+	worldMatrix = MatrixMultiply(worldMatrix, MatrixTranslate(cos(state->accumulatedTime), sin(state->accumulatedTime), -3.0f));
 
 	Matrix viewMatrix = MatrixIdentity();
 
-	Matrix projectionMatrix = MatrixPerspective(PI / 4.0f, state->aspectRatio, 0.01f, 100.0f);
+	Matrix projectionMatrix = MatrixPerspective(PI / 4.0, 1.0, 0.01, 100.0);
 
 	AppendCube(&audioPath, worldMatrix, viewMatrix, projectionMatrix);
 
@@ -88,7 +88,11 @@ void AppendAudioPath(AudioData* audioData, AudioPath audioPath, float deltaTime)
 		if (segmentLength < 0.001f || t >= 1.0f)
 		{
 			currentPoint++;
-			accumulatedLineDistance = 0.0f;// TODO: Adjust remaining t
+			if (segmentLength >= 0.001f)
+				accumulatedLineDistance = (t - 1.0f) * segmentLength;
+			else
+				accumulatedDistance = 0.0f;
+
 			continue;
 		}
 

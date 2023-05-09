@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <raylib.h>
 #include <raymath.h>
+#include <stdio.h>
 
 #include "audiodata.h"
 #include "soundgraphics.h"
@@ -33,6 +34,9 @@ void Normalize01Wave(AudioData* audioData)
 
         currentData.x = (currentData.x + 1.0f) * 0.5f;
         currentData.y = (currentData.y + 1.0f) * 0.5f;
+
+        currentData.x = Clamp(currentData.x, 0.0f, 1.0f);
+        currentData.y = Clamp(currentData.y, 0.0f, 1.0f);
 
         SetAudioSample(audioData, i, currentData, mask);
     }
@@ -224,6 +228,12 @@ int main(void)
     uint8_t* wavData;
     uint32_t wavDataLength = CreateWav16PCMStereo(wavSamples, sampleRate, audioData.samplesCount, &wavData);
 
+    FILE* audioFile = fopen("test.wav", "wb");
+
+    fwrite(wavData, sizeof(uint8_t), wavDataLength, audioFile);
+
+    fclose(audioFile);
+
     InitAudioDevice();
     Music music = LoadMusicStreamFromMemory(".wav", wavData, wavDataLength);
     PlayMusicStream(music);
@@ -231,6 +241,10 @@ int main(void)
     float previousMusicTimePlayed = 0.0f;
 
     Camera camera = { { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 1.0f, 0.0f }, 2.0f, CAMERA_ORTHOGRAPHIC };
+
+    Shader shader = LoadShader("./data/vs.glsl", "./data/fs.glsl");
+    SetShaderValue(shader, GetShaderLocation(shader, "aspectRatio"), &state.aspectRatio, SHADER_UNIFORM_FLOAT);
+
 
 	while (!WindowShouldClose())
 	{
@@ -243,7 +257,9 @@ int main(void)
         int lastSampleIndex = (int)(currentMusicTimePlayed / animationTime * (float)audioData.samplesCount);
 
         Mesh mesh = GenFrameMesh(audioData, firstSampleIndex, lastSampleIndex);
+
         Model model = LoadModelFromMesh(mesh);
+        model.materials[0].shader = shader;
 
         UpdateMusicStream(music);
 
@@ -252,9 +268,7 @@ int main(void)
         ClearBackground(BLACK);
         
         BeginMode3D(camera);
-
         DrawModelEx(model, Vector3Zero(), (Vector3) { 0.0f, 1.0f, 0.0f }, 0.0f, (Vector3) { 1.0f, (float)screenHeight / (float)screenWidth, 1.0f }, GREEN);
-        
         EndMode3D();
 
 		EndDrawing();
@@ -263,6 +277,8 @@ int main(void)
         
         previousMusicTimePlayed = currentMusicTimePlayed;
 	}
+
+    UnloadShader(shader);
 
     FreeWav(wavData);
     FreeWavSamples(wavSamples);

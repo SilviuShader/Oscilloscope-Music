@@ -10,8 +10,8 @@ uint16_t* CreateStereoWavSamples(const float* leftChannel, const float* rightCha
 
 	for (int i = 0; i < samplesCount; i++)
 	{
-        samples[i << 1] = (uint16_t)(leftChannel[i] * (float)USHRT_MAX);
-        samples[(i << 1) + 1] = (uint16_t)(rightChannel[i] * (float)USHRT_MAX);
+        samples[i << 1] = (uint16_t)(leftChannel[i] * 0.5 * (double)USHRT_MAX);
+        samples[(i << 1) + 1] = (uint16_t)(rightChannel[i] * 0.5 * (double)USHRT_MAX);
 	}
 
     return samples;
