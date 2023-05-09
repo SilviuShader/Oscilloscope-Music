@@ -33,21 +33,22 @@ void GenerateAudioFrame(FrameGeneratorState* state, AudioData* audioData, float 
 	AppendAudioPoint(&audioPath, audioPoint);
 	*/
 
-	Matrix worldMatrix = MatrixRotateY(state->accumulatedTime * 0.1f * 2.0f);
-	worldMatrix = MatrixMultiply(worldMatrix, MatrixRotateZ(state->accumulatedTime * 0.05f * 2.0f));
-	worldMatrix = MatrixMultiply(worldMatrix, MatrixRotateX(state->accumulatedTime * 0.20f * 2.0f));
+	Matrix worldMatrix = MatrixRotateY(state->accumulatedTime * 0.1f * 10.0f);
+	worldMatrix = MatrixMultiply(worldMatrix, MatrixRotateZ(state->accumulatedTime * 0.05f * 10.0f));
+	worldMatrix = MatrixMultiply(worldMatrix, MatrixRotateX(state->accumulatedTime * 0.20f * 10.0f));
 
 	float bpm = 120.0f;
 
 	float scale = ((sinf(2.0f * PI * state->accumulatedTime * (bpm / 60.0f)) * 0.5f + 0.5f) * 0.3f + 0.2f) * 1.0;
 	worldMatrix = MatrixMultiply(worldMatrix, MatrixScale(scale, scale, scale));
-	worldMatrix = MatrixMultiply(worldMatrix, MatrixTranslate(cos(state->accumulatedTime), sin(state->accumulatedTime), -3.0f));
+	worldMatrix = MatrixMultiply(worldMatrix, MatrixTranslate(cos(state->accumulatedTime), sin(state->accumulatedTime * 2.0f), -3.0f));
 
 	Matrix viewMatrix = MatrixIdentity();
 
 	Matrix projectionMatrix = MatrixPerspective(PI / 4.0, 1.0, 0.01, 100.0);
 
 	AppendCube(&audioPath, worldMatrix, viewMatrix, projectionMatrix);
+	AppendSphere(sinf(state->accumulatedTime * 0.5f) * 20.0f, 0.01f, &audioPath, worldMatrix, viewMatrix, projectionMatrix);
 
 	//worldMatrix = MatrixMultiply(worldMatrix, MatrixTranslate(1.0f, 0.0f, 0.0f));
 	//AppendCube(&audioPath, worldMatrix);

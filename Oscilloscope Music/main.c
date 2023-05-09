@@ -189,7 +189,7 @@ int main(void)
           float    animationTime  = 30.0f;
 
 	const float    uIntensity     = 0.1f;
-	const float    uSize          = 0.01f;
+	const float    uSize          = 0.02f;
     const float    uIntensityBase = max(0.0f, uIntensity - 0.4f) * 0.7f - 1000.0f * uSize / 500.0f;
 
 	InitWindow(screenWidth, screenHeight, "Oscilloscope Music");

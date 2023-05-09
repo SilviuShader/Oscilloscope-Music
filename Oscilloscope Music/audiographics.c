@@ -1,10 +1,10 @@
 #include "audiographics.h"
 
-#include <raymath.h>
+#include <math.h>
+#include <stdlib.h>
 
 void AppendCube(AudioPath* audioPath, Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix)
 {
-	// TODO: Back to start point;
 	const Vector3 path3d[] = 
 	{
 		// front bottom segment
@@ -72,9 +72,37 @@ void AppendCube(AudioPath* audioPath, Matrix worldMatrix, Matrix viewMatrix, Mat
 		{  -1.f,   -1.f,   -1.f}
 	};
 
-	const int pointsCount = sizeof(path3d) / sizeof(Vector3);
+	const size_t pointsCount = sizeof(path3d) / sizeof(Vector3);
 
-	for (int i = 0; i < pointsCount; i++)
+	AppendPath3D(path3d, pointsCount, audioPath, worldMatrix, viewMatrix, projectionMatrix);
+}
+
+void AppendSphere(float frequency, float yStep, AudioPath* audioPath, Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix)
+{
+	size_t samplesCount = (int)(1.0f / yStep) + 1;
+
+	Vector3* path3d = malloc(sizeof(Vector3) * samplesCount);
+
+	for (int i = 0; i < samplesCount; i++)
+	{
+		float v = (float)i / (float)(samplesCount - 1);
+		float u = 0.0f + v * frequency;
+
+		float circleRadius = sinf(PI * v);
+
+		path3d[i].x = sinf(2.0f * PI * u) * circleRadius;
+		path3d[i].y = -cosf(PI * v);
+		path3d[i].z = cosf(2.0f * PI * u) * circleRadius;
+	}
+
+	AppendPath3D(path3d, samplesCount, audioPath, worldMatrix, viewMatrix, projectionMatrix);
+
+	free(path3d);
+}
+
+void AppendPath3D(Vector3* path3d, size_t samplesCount, AudioPath* audioPath, Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix)
+{
+	for (int i = 0; i < samplesCount; i++)
 	{
 		Vector4 point3D;
 		point3D.x = path3d[i].x * 0.5f;
@@ -96,8 +124,8 @@ void AppendCube(AudioPath* audioPath, Matrix worldMatrix, Matrix viewMatrix, Mat
 		audioPoint.position.x = point3D.x;
 		audioPoint.position.y = point3D.y;
 
-		audioPoint.frequency = 261.63f * 10.0f;
-		audioPoint.amplitude = 0.001f;
+		audioPoint.frequency = 261.63f;
+		audioPoint.amplitude = 0.005f;
 
 		AppendAudioPoint(audioPath, audioPoint);
 	}
@@ -105,7 +133,7 @@ void AppendCube(AudioPath* audioPath, Matrix worldMatrix, Matrix viewMatrix, Mat
 
 Vector4 Vector4Transform(Vector4 v, Matrix mat)
 {
-	Vector4 result = { 0 };
+	Vector4 result;
 
 	float x = v.x;
 	float y = v.y;
