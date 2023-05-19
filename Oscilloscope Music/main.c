@@ -167,11 +167,11 @@ int main(void)
     uint16_t* wavSamples = CreateStereoWavSamples(audioData.leftSamples, audioData.rightSamples, audioData.samplesCount);
     uint8_t* wavData;
     uint32_t wavDataLength = CreateWav16PCMStereo(wavSamples, sampleRate, audioData.samplesCount, &wavData);
-
+	/*
     FILE* audioFile = fopen("test.wav", "wb");
     fwrite(wavData, sizeof(uint8_t), wavDataLength, audioFile);
     fclose(audioFile);
-
+    */
     InitAudioDevice();
     Music music = LoadMusicStreamFromMemory(".wav", wavData, wavDataLength);
     PlayMusicStream(music);
