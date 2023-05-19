@@ -1,5 +1,6 @@
 #include "wavhelper.h"
 
+#include <raymath.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,8 +11,8 @@ uint16_t* CreateStereoWavSamples(const float* leftChannel, const float* rightCha
 
 	for (int i = 0; i < samplesCount; i++)
 	{
-        samples[i << 1] = (uint16_t)(leftChannel[i] * 0.5 * (double)USHRT_MAX);
-        samples[(i << 1) + 1] = (uint16_t)(rightChannel[i] * 0.5 * (double)USHRT_MAX);
+        samples[i << 1]       = Clamp((leftChannel[i] * 0.5 * (double)USHRT_MAX), SHRT_MIN, SHRT_MAX);
+        samples[(i << 1) + 1] = Clamp((rightChannel[i] * 0.5 * (double)USHRT_MAX), SHRT_MIN, SHRT_MAX);
 	}
 
     return samples;

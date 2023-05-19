@@ -6,8 +6,8 @@ Vector2 AudioToNDC(const float leftSample, const float rightSample)
 {
     Vector2 res;
 
-    res.x = leftSample * 2.0f - 1.0f;
-    res.y = rightSample * 2.0f - 1.0f;
+    res.x = leftSample;
+    res.y = rightSample;
 
     return res;
 }
@@ -57,7 +57,7 @@ Mesh GenFrameMesh(const AudioData audioData, const float uSize, const int firstS
         const int iTexCoords = (i - firstSampleIndex) * 12;
 
         // ===================== first triangle =====================
-
+        
         mesh.vertices[iVertex] = prevPosition.x - dir.x - norm.x;
         mesh.vertices[iVertex + 1] = prevPosition.y - dir.y - norm.y;
         mesh.vertices[iVertex + 2] = 0.0f;
@@ -69,30 +69,28 @@ Mesh GenFrameMesh(const AudioData audioData, const float uSize, const int firstS
         mesh.texcoords[iTexCoords] = 0;
         mesh.texcoords[iTexCoords + 1] = 0;
 
-
-        mesh.vertices[iVertex + 3] = prevPosition.x - dir.x + norm.x;
-        mesh.vertices[iVertex + 4] = prevPosition.y - dir.y + norm.y;
+        mesh.vertices[iVertex + 3] = nextPosition.x + dir.x - norm.x;
+        mesh.vertices[iVertex + 4] = nextPosition.y + dir.y - norm.y;
         mesh.vertices[iVertex + 5] = 0.0f;
 
-        mesh.normals[iNormal + 3] = -uSize;
-        mesh.normals[iNormal + 4] = uSize;
+        mesh.normals[iNormal + 3] = z + uSize;
+        mesh.normals[iNormal + 4] = -uSize;
         mesh.normals[iNormal + 5] = z;
 
-        mesh.texcoords[iTexCoords + 2] = 1;
-        mesh.texcoords[iTexCoords + 3] = 0;
+        mesh.texcoords[iTexCoords + 2] = 0;
+        mesh.texcoords[iTexCoords + 3] = 1;
 
-
-        mesh.vertices[iVertex + 6] = nextPosition.x + dir.x - norm.x;
-        mesh.vertices[iVertex + 7] = nextPosition.y + dir.y - norm.y;
+        mesh.vertices[iVertex + 6] = prevPosition.x - dir.x + norm.x;
+        mesh.vertices[iVertex + 7] = prevPosition.y - dir.y + norm.y;
         mesh.vertices[iVertex + 8] = 0.0f;
 
-        mesh.normals[iNormal + 6] = z + uSize;
-        mesh.normals[iNormal + 7] = -uSize;
+        mesh.normals[iNormal + 6] = -uSize;
+        mesh.normals[iNormal + 7] = uSize;
         mesh.normals[iNormal + 8] = z;
 
-        mesh.texcoords[iTexCoords + 4] = 0;
-        mesh.texcoords[iTexCoords + 5] = 1;
-
+        mesh.texcoords[iTexCoords + 4] = 1;
+        mesh.texcoords[iTexCoords + 5] = 0;
+        
         // ===================== second triangle =====================
 
         mesh.vertices[iVertex + 9] = prevPosition.x - dir.x + norm.x;

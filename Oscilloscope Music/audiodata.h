@@ -20,7 +20,9 @@ typedef struct AudioData
 	int    sampleRate;
 } AudioData;
 
-AudioData CreateAudioData(size_t, int sample_rate);
+AudioData CreateAudioData(size_t, int);
+AudioData LoadAudioDataFromFile(char*);
+
 void FreeAudioData(AudioData*);
 void AutoExtendAudioData(AudioData*, size_t);
 

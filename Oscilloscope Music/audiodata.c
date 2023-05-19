@@ -26,6 +26,41 @@ AudioData CreateAudioData(const size_t size, const int sampleRate)
 	return audioData;
 }
 
+AudioData LoadAudioDataFromFile(char* filename)
+{
+	Wave wave = LoadWave(filename);
+
+	int samplesCount = wave.frameCount / wave.channels;
+
+	AudioData audioData = CreateAudioData(samplesCount, wave.sampleRate);
+	float* wavSamples = LoadWaveSamples(wave);
+
+	for (int i = 0; i < samplesCount; i++)
+	{
+		int sampleIndex = i * wave.channels;
+		Vector2 sample;
+
+		switch (wave.channels)
+		{
+		case 1:
+			sample.x = wavSamples[sampleIndex];
+			sample.y = wavSamples[sampleIndex];
+			break;
+		case 2:
+			sample.x = wavSamples[sampleIndex];
+			sample.y = wavSamples[sampleIndex + 1];
+			break;
+		}
+
+		SetAudioSample(&audioData, i, sample, LEFT_CHANNEL | RIGHT_CHANNEL);
+	}
+
+	UnloadWaveSamples(wavSamples);
+	UnloadWave(wave);
+
+	return audioData;
+}
+
 void FreeAudioData(AudioData* audioData)
 {
 	free(audioData->leftSamples);
