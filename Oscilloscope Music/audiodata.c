@@ -30,7 +30,7 @@ AudioData LoadAudioDataFromFile(char* filename)
 {
 	Wave wave = LoadWave(filename);
 
-	int samplesCount = wave.frameCount / wave.channels;
+	int samplesCount = wave.frameCount;
 
 	AudioData audioData = CreateAudioData(samplesCount, wave.sampleRate);
 	float* wavSamples = LoadWaveSamples(wave);
